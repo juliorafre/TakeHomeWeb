@@ -121,8 +121,8 @@ The UI will follow the Figma design strictly, styled with **TailwindCSS**, with 
 
 ## Considerations
 - **Trade-off**: Apollo adds unnecessary complexity for a short challenge but provides a robust solution for state management and caching.
-- **Accepted tech debt**: no i18n, dark mode deactivation and testing.
-- **Performance**: limited to lazy load + cache, and code-splitting.  
+- **Accepted tech debt**: dark mode deactivation, Test coverage skipped, Web Workers not used.
+- **Performance**: limited to lazy load + cache + code-splitting & abortControllers 
 - **Accessibility**: role="dialog", focus trap, alt texts, keyboard navigation. 
 
 ---

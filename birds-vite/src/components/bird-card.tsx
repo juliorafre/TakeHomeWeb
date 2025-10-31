@@ -18,7 +18,7 @@ const BirdCard = ({ bird }: BirdCardProps) => {
 				state={{
 					birdData: bird,
 				}}
-				aria-label={`View detials for ${bird.english_name}`}
+				aria-label={`View details for ${bird.english_name}`}
 				type="button"
 				className="w-full cursor-pointer"
 			>
