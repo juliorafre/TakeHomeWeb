@@ -1,0 +1,1 @@
+export const WATERMARK_URL = "https://us-central1-copilot-take-home.cloudfunctions.net/watermark"
