@@ -1,59 +1,53 @@
-import { useQuery } from "@apollo/client";
-import { useEffect } from "react";
 import { useParams } from "react-router";
+import ErrorHandler from "@/components/error-handler";
 import Notes from "@/components/notes";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useNotesDialog } from "@/context/notes-dialog-context";
-import { GET_BIRD_BY_ID } from "@/graphql/queries/birds.queries";
+import { Skeleton } from "@/components/skeletons/skeleton";
+import { useNotesDialog } from "@/contexts/notes-dialog-context";
+import { useBirdById } from "@/hooks/use-bird-by-id";
 import BirdNameInLanguage from "./bird-name-in-language";
 import DialogNotes from "./dialog-notes";
 import LazyImage from "./lazy-image";
 
-//import NoteItem from "./note-item";
-
 const BirdPageDetail = () => {
 	const { birdId } = useParams();
 	const { isOpen, closeDialog } = useNotesDialog();
-	const { loading, error, data } = useQuery(GET_BIRD_BY_ID, {
-		variables: birdId ? { id: birdId } : undefined,
-		skip: !birdId,
+	const { bird, birdNotes, loading, error, refetch } = useBirdById({
+		birdId: birdId as string,
 	});
 
-	const birdNotes = data?.bird.notes || [];
-
-	useEffect(() => {
-		console.log("Single Bird", data);
-	}, [data]);
-
 	if (error) {
-		return <p>Error</p>;
+		return (
+			<ErrorHandler
+				error={error}
+				onRetry={refetch}
+				graphqlErrorMessage="We are experiencing issues fetching bird data."
+				networkErrorMessage="Network error:"
+			/>
+		);
 	}
 
 	return (
 		<div className="flex flex-col space-y-2 pt-6">
-			<section className="px-6 grid grid-cols-3 gap-x-3">
+			<section className="px-6 grid grid-cols-1 md:grid-cols-3  gap-x-3">
 				{loading ? (
 					<Skeleton className="w-full aspect-video rounded-xl" />
 				) : (
-					<LazyImage src={data?.bird.image_url} alt={data?.bird.english_name} />
+					<LazyImage src={bird?.image_url} alt={bird?.english_name || "bird"} />
 				)}
 			</section>
 
 			<section className="w-full px-6">
 				<div className=" pb-3 pt-5">
-					{/*  TODO / Observation - This values are so differents */}
+					{/*  TODO / Observation - This values are so specific */}
 					<h3 className="font-bold text-[22px] leading-[27.5px]">Notes</h3>
 				</div>
-				<Notes
-					notes={birdNotes}
-					loading={loading}
-					imageUrl={data?.bird.image_url}
-				/>
+				<Notes notes={birdNotes} loading={loading} imageUrl={bird?.image_url} />
 			</section>
 
 			<section className="w-full px-6">
+				{/* Static implementation fot the TakeHome */}
 				<div className="pb-3 pt-5">
-					{/* TODO / Observation - This values are so differents */}
+					{/* TODO / Observation - This values are so specific  */}
 					<h3 className="font-bold text-[22px] leading-[27.5px]">
 						In Other Languages
 					</h3>

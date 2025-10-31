@@ -5,7 +5,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useWatermarkImage } from "@/hooks/use-watermark-image";
 
 interface LazyImageProps {
-	src: string;
+	src?: string;
 	alt: string;
 	className?: string;
 }
@@ -24,11 +24,22 @@ const LazyImage = React.memo(
 			});
 
 		useEffect(() => {
-			if (isIntersecting && !hasLoaded) {
+			if (isIntersecting && !hasLoaded && src) {
 				fetchAndWatermark();
 				setHasLoaded(true);
 			}
-		}, [isIntersecting, fetchAndWatermark, hasLoaded]);
+		}, [isIntersecting, fetchAndWatermark, hasLoaded, src]);
+
+		// Handle undefined or missing image source
+		if (!src) {
+			return (
+				<div
+					className={`${className} bg-neutral-200 grid place-content-center`}
+				>
+					<p className="text-sm text-neutral-500">Image not available</p>
+				</div>
+			);
+		}
 
 		return (
 			<div ref={ref} className="size-auto">
@@ -40,7 +51,7 @@ const LazyImage = React.memo(
 						</Button>
 					</div>
 				)}
-				{isLoading && (
+				{isLoading && !error && (
 					<div className="w-full aspect-video rounded-xl bg-neutral-200 grid place-items-center">
 						<LoaderCircleIcon
 							size={40}
@@ -48,13 +59,14 @@ const LazyImage = React.memo(
 						/>
 					</div>
 				)}
-				<img
-					src={watermarkedUrl}
-					alt={alt}
-					className={className}
-					loading="lazy"
-					style={{ display: isLoading || error ? "none" : "block" }}
-				/>
+				{!isLoading && !error && (
+					<img
+						src={watermarkedUrl}
+						alt={alt}
+						className={className}
+						loading="lazy"
+					/>
+				)}
 			</div>
 		);
 	},

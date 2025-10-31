@@ -1,4 +1,4 @@
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import type { PropsWithChildren } from "react";
 import { client } from "@/graphql/client";
 

@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/skeletons/skeleton";
 
 const SingleBirdSkeleton = () => {
 	return (
@@ -17,7 +17,7 @@ const SingleBirdSkeleton = () => {
 			</section>
 			<section className="w-full px-6">
 				<div className="pb-3 pt-5">
-					{/* TODO - This values are so differents */}
+					{/* TODO - This values are so specifics */}
 					<h3 className="font-bold text-[22px] leading-[27.5px]">
 						In Other Languages
 					</h3>

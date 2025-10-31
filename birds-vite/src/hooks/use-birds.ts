@@ -1,4 +1,5 @@
-import { useQuery } from "@apollo/client";
+import type { ErrorLike } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { useMemo, useState } from "react";
 import { GET_ALL_BIRDS } from "@/graphql/queries/birds.queries";
 import type { GetAllBirdsQueryGql } from "@/graphql/schemas/Bird";
@@ -6,14 +7,18 @@ import type { GetAllBirdsQueryGql } from "@/graphql/schemas/Bird";
 interface UseBirdsReturn {
 	birds: GetAllBirdsQueryGql["birds"];
 	loading: boolean;
-	error: Error | undefined;
+	error: ErrorLike | undefined;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 	filteredBirds: GetAllBirdsQueryGql["birds"];
+	refetch: () => void;
 }
 
 export const useBirds = (): UseBirdsReturn => {
-	const { loading, error, data } = useQuery(GET_ALL_BIRDS);
+	const { loading, error, data, refetch } = useQuery(GET_ALL_BIRDS, {
+		errorPolicy: "all",
+		notifyOnNetworkStatusChange: true,
+	});
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const birds = useMemo(() => data?.birds || [], [data?.birds]);
@@ -36,9 +41,10 @@ export const useBirds = (): UseBirdsReturn => {
 	return {
 		birds,
 		loading,
-		error: error as Error | undefined,
+		error,
 		searchQuery,
 		setSearchQuery,
 		filteredBirds,
+		refetch,
 	};
 };

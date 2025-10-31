@@ -1,5 +1,8 @@
-import { useCallback, useEffect } from "react";
+import { LoaderIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import Button from "@/components/button";
 import {
 	Dialog,
@@ -8,8 +11,22 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/shadcn/dialog";
 import useCreateNotes from "@/hooks/use-create-notes";
+
+type ButtonState = "idle" | "loading" | "success";
+
+const buttonCopy: Record<ButtonState, React.ReactNode> = {
+	idle: "Add note",
+	loading: (
+		<LoaderIcon
+			size={14}
+			color="rgba(255, 255, 255, 0.65)"
+			className="animate-spin"
+		/>
+	),
+	success: "Note added!",
+};
 
 interface DialogNotesProps {
 	isOpen: boolean;
@@ -23,6 +40,8 @@ type NoteInputs = {
 };
 
 const DialogNotes = ({ isOpen, onCloseDialog, birdId }: DialogNotesProps) => {
+	const [buttonState, setButtonState] = useState<ButtonState>("idle");
+	const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const {
 		register,
 		handleSubmit,
@@ -38,6 +57,7 @@ const DialogNotes = ({ isOpen, onCloseDialog, birdId }: DialogNotesProps) => {
 	} = useCreateNotes();
 
 	const onSubmit: SubmitHandler<NoteInputs> = (data) => {
+		setButtonState("loading");
 		createNote({
 			birdId: birdId,
 			comment: data.note,
@@ -52,27 +72,37 @@ const DialogNotes = ({ isOpen, onCloseDialog, birdId }: DialogNotesProps) => {
 	}, [onCloseDialog, resetForm, resetMutation]);
 
 	useEffect(() => {
-		//show me the result of the mutation
 		if (data) {
-			console.log("Note added successfully:", data);
+			setButtonState("success");
+			resetForm();
+			resetMutation();
+			closeTimeoutRef.current = setTimeout(() => {
+				onCloseDialog();
+				setButtonState("idle");
+			}, 800);
 		}
-		if (error) {
-			console.error("Error adding note:", error);
-		}
-	}, [data, error]);
+	}, [data, onCloseDialog, resetForm, resetMutation]);
 
-	// if successfully added note, close the dialog
 	useEffect(() => {
-		if (data) {
-			handleOnCloseDialog();
+		return () => {
+			if (closeTimeoutRef.current) {
+				clearTimeout(closeTimeoutRef.current);
+			}
+		};
+	}, []);
+
+	useEffect(() => {
+		if (error) {
+			setButtonState("idle");
+			toast.error("An error occurred while creating the note.");
 		}
-	}, [data, handleOnCloseDialog]);
+	}, [error]);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={handleOnCloseDialog}>
 			<DialogContent className="sm:max-w-md" aria-describedby={undefined}>
 				<DialogHeader>
-					<DialogTitle>Add note {loading && "..."}</DialogTitle>
+					<DialogTitle>Add note</DialogTitle>
 				</DialogHeader>
 				<div className="flex items-center gap-2 p-4 space-y-4">
 					<div className="grid flex-1 gap-2">
@@ -126,15 +156,39 @@ const DialogNotes = ({ isOpen, onCloseDialog, birdId }: DialogNotesProps) => {
 						</form>
 					</div>
 				</div>
-				<DialogFooter className="sm:justify-end border-t flex items-center gap-4">
-					<DialogClose asChild>
-						<Button type="button" variant="outline">
-							Close
+				<DialogFooter className="justify-between border-t flex flex-row items-center gap-4">
+					<div>
+						{error && (
+							<p className="text-red-500 text-xs">
+								An error occurred while creating the note.
+							</p>
+						)}
+					</div>
+					<div className="flex flex-row items-center gap-4 ">
+						<DialogClose asChild>
+							<Button type="button" variant="outline">
+								Close
+							</Button>
+						</DialogClose>
+						<Button
+							type="submit"
+							form="notes"
+							disabled={!isValid || loading}
+							className="flex items-center justify-center w-[90px]"
+						>
+							<AnimatePresence mode="popLayout" initial={false}>
+								<motion.span
+									transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+									initial={{ opacity: 0, y: -25 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: 25 }}
+									key={buttonState}
+								>
+									{buttonCopy[buttonState]}
+								</motion.span>
+							</AnimatePresence>
 						</Button>
-					</DialogClose>
-					<Button type="submit" form="notes" disabled={!isValid || loading}>
-						{loading ? "Creating note..." : "Add note"}
-					</Button>
+					</div>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

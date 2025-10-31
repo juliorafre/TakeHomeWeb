@@ -1,6 +1,6 @@
 import { NavLink, useLocation, useSearchParams } from "react-router";
 import Button from "@/components/button";
-import { useNotesDialog } from "@/context/notes-dialog-context";
+import { useNotesDialog } from "@/contexts/notes-dialog-context";
 import { cn } from "@/lib/utils";
 
 const Header = () => {
@@ -11,7 +11,7 @@ const Header = () => {
 	const { openDialog } = useNotesDialog();
 
 	return (
-		<div className="w-full py-4 px-6 flex justify-between border-b border-border sticky top-0 bg-background z-10">
+		<div className="w-full py-4 px-6 flex flex-col sm:flex-row gap-4 justify-between border-b border-border sticky top-0 bg-background z-10">
 			<div className="inline-flex gap-x-2">
 				<NavLink
 					to="/"

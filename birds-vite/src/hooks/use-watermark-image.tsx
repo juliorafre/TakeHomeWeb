@@ -6,7 +6,7 @@ const PLACEHOLDER =
 	"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='400' height='300' fill='%23f3f4f6'/%3E%3C/svg%3E";
 
 interface useWatermarkImageProps {
-	imageURL: string;
+	imageURL: string | undefined;
 }
 
 export const useWatermarkImage = ({ imageURL }: useWatermarkImageProps) => {
@@ -17,6 +17,12 @@ export const useWatermarkImage = ({ imageURL }: useWatermarkImageProps) => {
 	const objectUrlRef = useRef<string | null>(null);
 
 	const fetchAndWatermark = useCallback(async () => {
+		// Guard: Don't attempt to fetch if imageURL is undefined or empty
+		if (!imageURL) {
+			setError(new Error("No image URL provided"));
+			return;
+		}
+
 		setIsLoading(true);
 		setError(null);
 

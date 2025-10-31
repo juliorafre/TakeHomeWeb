@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { Link } from "react-router";
 import type { GetAllBirdsQuery } from "@/graphql/schemas/Bird";
 import LazyImage from "./lazy-image";
@@ -8,7 +9,10 @@ interface BirdCardProps {
 
 const BirdCard = ({ bird }: BirdCardProps) => {
 	return (
-		<li className="rounded-2xl p-2 clickeable hover:bg-neutral-100">
+		<motion.li
+			layout
+			className="rounded-2xl p-2 clickeable hover:bg-gray-200/50 transition-colors"
+		>
 			<Link
 				to={`/bird/${bird.id}?name=${bird.english_name}`}
 				state={{
@@ -32,7 +36,7 @@ const BirdCard = ({ bird }: BirdCardProps) => {
 					</figcaption>
 				</figure>
 			</Link>
-		</li>
+		</motion.li>
 	);
 };
 

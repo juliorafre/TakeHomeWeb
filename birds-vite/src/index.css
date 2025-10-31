@@ -4,7 +4,6 @@
 
 /* NOTES: Why I use oklch() 
 *  Is a newer color model that is designed to be perceptually uniform. This means that colors are much more accurate in terms of how humans perceive them and it makes working with them much easier.
-* And shadcn use it by default in their themes. (I use sidebar chadcn)
 * After read: https://oklch.fyi/
 * I left the hex values for TakeHome inspection.
 */

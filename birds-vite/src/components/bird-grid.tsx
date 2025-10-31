@@ -1,36 +1,33 @@
+import BirdCard from "@/components/bird-card";
+import ErrorHandler from "@/components/error-handler";
 import type { GetAllBirdsQuery } from "@/graphql/schemas/Bird";
-import BirdCard from "./bird-card";
-import SkeletonBirdCard from "./skeleton-bird-card";
+import BirdGridSkeleton from "./skeletons/bird-grid-skeleton";
 
 interface BirdsGridProps {
 	birds: GetAllBirdsQuery[];
 	loading: boolean;
 	error: Error | undefined;
+	refetch: () => void;
 }
 
-const BirdsGrid = ({ birds, loading, error }: BirdsGridProps) => {
+const BirdsGrid = ({ birds, loading, error, refetch }: BirdsGridProps) => {
 	if (loading) {
-		return (
-			<div className="p-6 grid grid-cols-4 gap-6">
-				<SkeletonBirdCard />
-				<SkeletonBirdCard />
-				<SkeletonBirdCard />
-				<SkeletonBirdCard />
-				<SkeletonBirdCard />
-			</div>
-		);
+		return <BirdGridSkeleton />;
 	}
 
 	if (error) {
 		return (
-			<div className="p-6">
-				<p>Error: {error.message}</p>
-			</div>
+			<ErrorHandler
+				error={error}
+				onRetry={refetch}
+				graphqlErrorMessage="We are experiencing issues fetching bird data."
+				networkErrorMessage="Network error:"
+			/>
 		);
 	}
 
 	return (
-		<ul className="grid grid-cols-4 gap-6 p-6">
+		<ul className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-6">
 			{birds.map((bird) => (
 				<BirdCard key={bird.id} bird={bird} />
 			))}

@@ -1,4 +1,5 @@
-import { type ApolloError, useMutation } from "@apollo/client";
+import type { ErrorLike } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { toast } from "sonner";
 import { ADD_NOTE_MUTATION } from "@/graphql/mutations/birds.mutation";
 import { GET_BIRD_BY_ID } from "@/graphql/queries/birds.queries";
@@ -10,7 +11,7 @@ import type {
 interface UseCreateNoteReturn {
 	createNote: (data: AddNoteMutationVariables) => void;
 	loading: boolean;
-	error: ApolloError | undefined;
+	error: ErrorLike | undefined;
 	data: AddNoteMutationResponse | undefined;
 	reset: () => void;
 }

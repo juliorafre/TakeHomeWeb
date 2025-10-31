@@ -18,5 +18,31 @@ export default defineConfig(({ mode }) => {
 				"@": path.resolve(__dirname, "./src"),
 			},
 		},
+		build: {
+			rollupOptions: {
+				output: {
+					manualChunks: (id) => {
+						if (id.includes("node_modules")) {
+							if (id.includes("@apollo/client") || id.includes("graphql")) {
+								return "apollo";
+							}
+							if (id.includes("react-router")) {
+								return "react-router";
+							}
+							if (id.includes("motion")) {
+								return "motion";
+							}
+							if (id.includes("react-hook-form")) {
+								return "forms";
+							}
+							if (id.includes("@radix-ui") || id.includes("lucide-react")) {
+								return "ui-libs";
+							}
+							return "vendor";
+						}
+					},
+				},
+			},
+		},
 	};
 });

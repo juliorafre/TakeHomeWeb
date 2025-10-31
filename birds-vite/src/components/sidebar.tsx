@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const Sidebar = () => {
 	return (
-		<aside className="p-4 space-y-4 bg-sidebar max-h-dvh sticky top-0">
+		<aside className="p-4 space-y-4 bg-sidebar max-h-dvh sticky top-0 hidden sm:block">
 			<section className="space-y-3">
 				<h1 className="m-0 leading-6 tracking-normal font-medium">
 					The Bird App

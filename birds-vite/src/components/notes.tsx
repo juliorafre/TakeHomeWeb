@@ -5,7 +5,7 @@ import NotesSkeleton from "./skeletons/notes-skeleton";
 interface NotesProps {
 	notes: Note[];
 	loading: boolean;
-	imageUrl: string;
+	imageUrl?: string;
 }
 
 const Notes = ({ notes, loading, imageUrl }: NotesProps) => {
